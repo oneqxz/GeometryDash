@@ -2,10 +2,7 @@ package me.oneqxz.cashsystem.report;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import me.oneqxz.cashsystem.report.sections.AffectedScreenSection;
-import me.oneqxz.cashsystem.report.sections.ICrashSection;
-import me.oneqxz.cashsystem.report.sections.StackTraceCrushSection;
-import me.oneqxz.cashsystem.report.sections.SystemDetailsSection;
+import me.oneqxz.cashsystem.report.sections.*;
 import me.sgx.GeometryDash;
 import org.apache.commons.io.IOUtils;
 
@@ -14,6 +11,7 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.UUID;
 
 @Log4j2
 @Getter
@@ -23,6 +21,7 @@ public class CrashReport {
     private final ICrashSection[] sections = new ICrashSection[]{
             new StackTraceCrushSection(),
             new AffectedScreenSection(),
+            new LevelDetailsSection(),
             new SystemDetailsSection()
     };
 
@@ -73,12 +72,13 @@ public class CrashReport {
         sb.append("// %s\n\n".formatted(this.generateWittyComment()));
 
         sb.append("Time: %s\n".formatted(this.getTime()));
-        sb.append("Description: %s\n\n".formatted(this.message));
+        sb.append("Description: %s\n".formatted(this.message));
+        sb.append("UUID: %s\n\n".formatted(UUID.randomUUID()));
 
         sb.append(this.getCauseAsString());
         sb.append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
         sb.append("-".repeat(87));
-        sb.append("\n\n");
+        sb.append("\n\n\n");
         sb.append(this.getStackTraceAsString());
 
         return sb.toString();
@@ -87,10 +87,12 @@ public class CrashReport {
     private String getStackTraceAsString()
     {
         StringBuilder sb = new StringBuilder();
-        for(ICrashSection section : this.sections)
+        for(int i = 0; i < sections.length; i++)
         {
+            ICrashSection section = sections[i];
             sb.append(section.formatSection(this.cause));
-            sb.append("\n\n");
+            if(i < sections.length - 1)
+                sb.append("\n\n");
         }
         return sb.toString();
     }

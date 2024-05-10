@@ -17,12 +17,12 @@ public class SystemDetailsSection implements ICrashSection {
 
         sb.append("-- System Details --\n");
         sb.append("Details:\n");
-        sb.append(addSystemDetail("Geometry Dash Version", GeometryDash.VERSION::getAsString));
-        sb.append(addSystemDetail("Geometry Dash Version ID", () -> String.valueOf(GeometryDash.VERSION.getVersion())));
-        sb.append(addSystemDetail("Operating System", () -> "%s (%s) version %s".formatted(System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"))));
-        sb.append(addSystemDetail("Java Version", () -> "%s, %s".formatted(System.getProperty("java.version"), System.getProperty("java.vendor"))));
-        sb.append(addSystemDetail("Java VM Version", () -> "%s (%s), %s".formatted(System.getProperty("java.vm.name"), System.getProperty("java.vm.info"), System.getProperty("java.vm.vendor"))));
-        sb.append(addSystemDetail("Memory", () -> {
+        sb.append(addDetail("Geometry Dash Version", GeometryDash.VERSION::getAsString));
+        sb.append(addDetail("Geometry Dash Version ID", () -> String.valueOf(GeometryDash.VERSION.getVersion())));
+        sb.append(addDetail("Operating System", () -> "%s (%s) version %s".formatted(System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"))));
+        sb.append(addDetail("Java Version", () -> "%s, %s".formatted(System.getProperty("java.version"), System.getProperty("java.vendor"))));
+        sb.append(addDetail("Java VM Version", () -> "%s (%s), %s".formatted(System.getProperty("java.vm.name"), System.getProperty("java.vm.info"), System.getProperty("java.vm.vendor"))));
+        sb.append(addDetail("Memory", () -> {
             Runtime runtime = Runtime.getRuntime();
             long l = runtime.maxMemory();
             long m = runtime.totalMemory();
@@ -32,8 +32,8 @@ public class SystemDetailsSection implements ICrashSection {
             long q = n / 1024L / 1024L;
             return "%s bytes (%s MB) / %s bytes (%s MB) up to %s bytes (%s MB)".formatted(n, q, m, p, l, o);
         }));
-        sb.append(addSystemDetail("CPUs", () -> String.valueOf(Runtime.getRuntime().availableProcessors())));
-        sb.append(addSystemDetail("JVM Flags", () -> {
+        sb.append(addDetail("CPUs", () -> String.valueOf(Runtime.getRuntime().availableProcessors())));
+        sb.append(addDetail("JVM Flags", () -> {
             RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
 
             List<String> list = runtimeMXBean.getInputArguments().stream().filter(string -> string.startsWith("-X")).toList();
@@ -41,18 +41,5 @@ public class SystemDetailsSection implements ICrashSection {
         }));
 
         return sb.toString();
-    }
-
-    private String addSystemDetail(String title, Callable<String> call)
-    {
-        try
-        {
-            return "\t%s: %s\n".formatted(title, call.call());
-        }
-        catch (Exception e)
-        {
-            log.fatal("Error when generating a crash report!", e);
-            return null;
-        }
     }
 }

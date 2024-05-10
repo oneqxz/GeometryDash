@@ -9,7 +9,7 @@ public class AffectedScreenSection implements ICrashSection {
         StringBuilder sb = new StringBuilder();
         sb.append("-- Affected scene --\n");
         sb.append("Details:\n");
-        sb.append("\tScene name: ").append(SceneSystem.getScene().toString());
+        sb.append(addDetail("Scene name", () -> SceneSystem.getScene().toString()));
         return sb.toString();
     }
 

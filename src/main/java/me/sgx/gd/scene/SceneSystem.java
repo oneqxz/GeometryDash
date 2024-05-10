@@ -26,6 +26,7 @@ public class SceneSystem {
 	public static final String TITLE = String.format("%s %s", GeometryDash.NAME, GeometryDash.VERSION.getAsString());
 	public static final HashMap<String, Object> globalData = new HashMap<>();
 
+	public static int FPS;
 	public static boolean running = true;
 	@Getter private static Scene scene = null;
 
@@ -85,6 +86,7 @@ public class SceneSystem {
 
 			if(lastFpsUpdateTime >= 1.0f) {
 				lastFpsUpdateTime = 0.0f;
+				FPS = fps;
 				Window.setTitle(TITLE + " | FPS: " + fps);
 
 				fps = 0;
